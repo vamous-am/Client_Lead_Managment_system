@@ -128,6 +128,9 @@ router.patch('/:id/status', requireAuth, async (req: Request, res: Response): Pr
     timestamp: new Date(),
   });
 
+  // ponytail: fetch-mutate-save; concurrent writes could lose one update.
+  // Acceptable for single-admin scope. Upgrade to $set/$push operators if
+  // multi-user access is ever added.
   await lead.save();
   res.json({ success: true, data: lead });
 });
@@ -149,6 +152,13 @@ router.post('/:id/notes', requireAuth, async (req: Request, res: Response): Prom
     });
     return;
   }
+  if (content.trim().length > 500) {
+    res.status(400).json({
+      success: false,
+      error: { message: 'Note content must be 500 characters or fewer' },
+    });
+    return;
+  }
 
   const lead = await Lead.findById(req.params.id);
   if (!lead) {
@@ -163,6 +173,7 @@ router.post('/:id/notes', requireAuth, async (req: Request, res: Response): Prom
     timestamp: new Date(),
   });
 
+  // ponytail: fetch-mutate-save; same ceiling as PATCH /:id/status.
   await lead.save();
   res.json({ success: true, data: lead });
 });

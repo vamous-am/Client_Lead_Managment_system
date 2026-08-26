@@ -3,7 +3,7 @@ import { z } from 'zod';
 /** Note entry appended to a lead's timeline. */
 export const noteSchema = z.object({
   type: z.enum(['note', 'status_change']),
-  content: z.string().min(1),
+  content: z.string().min(1).max(500),
   author: z.string().min(1),
   timestamp: z.coerce.date().default(() => new Date()),
 });
