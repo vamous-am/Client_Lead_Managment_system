@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { formatDistanceToNow, format, differenceInHours } from 'date-fns';
 import { Sheet, SheetContent, SheetTitle, SheetClose } from './ui/sheet.js';
@@ -8,7 +8,6 @@ import { Skeleton } from './ui/skeleton.js';
 import { useLead } from '../hooks/useLead.js';
 import { LeadStatus } from '@crm/shared';
 import api from '../lib/api.js';
-import type { LeadDoc } from '../hooks/useLeads.js';
 
 interface LeadDrawerProps {
   leadId: string | null;
@@ -45,7 +44,6 @@ export function LeadDrawer({
 }: LeadDrawerProps) {
   const queryClient = useQueryClient();
   const [noteContent, setNoteContent] = useState('');
-  const closeButtonRef = useRef<HTMLButtonElement>(null);
 
   const { data: lead, isLoading, isError, refetch } = useLead(leadId);
 
@@ -99,7 +97,6 @@ export function LeadDrawer({
           </SheetTitle>
           <SheetClose>
             <Button
-              ref={closeButtonRef}
               variant="ghost"
               size="sm"
               aria-label="Close drawer"
